@@ -26,6 +26,8 @@ public class DBConnection {
 
 	private MongoDatabase mongoDB;
 
+	private MongoClient mongoClient;
+
 	
 	@PostConstruct
 	public void afterCreate() {
@@ -42,11 +44,9 @@ public class DBConnection {
 			mongoPort = System.getenv("MONGODB_24_RHEL7_SERVICE_PORT");
 		}
 		
-		int port = Integer.decode(mongoPort);
-		
 		try {
 		MongoCredential credential = MongoCredential.createCredential(mongoUser, mongoDBName, mongoPassword.toCharArray());
-		MongoClient mongoClient = new MongoClient(new ServerAddress(mongoHost, Integer.parseInt(mongoPort)), Arrays.asList(credential));
+		mongoClient = new MongoClient(new ServerAddress(mongoHost, Integer.parseInt(mongoPort)), Arrays.asList(credential));
 		mongoDB = mongoClient.getDatabase(mongoDBName);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -61,12 +61,12 @@ public class DBConnection {
 		return mongoDB;
 	}
 
-	public MongoCollection getCollection() {
+	public MongoCollection<Document> getCollection() {
 		return mongoDB.getCollection(COLLECTION_NAME);
 	}
 
 	private void initDatabase(MongoDatabase mongoDB) {
-		MongoCollection parkListCollection = getCollection();
+		MongoCollection<Document> parkListCollection = getCollection();
 		int imported = 0;
 		if (parkListCollection.count() < 1) {
 			System.out.println("The database is empty.  We need to populate it");

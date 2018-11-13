@@ -42,7 +42,7 @@ public class MLBParkResource {
 	public List<MLBPark> getAllParks() {
 		ArrayList<MLBPark> allParksList = new ArrayList<MLBPark>();
 
-		MongoCollection mlbParks = dbConnection.getCollection();
+		MongoCollection<Document> mlbParks = dbConnection.getCollection();
 		MongoCursor<Document> cursor = mlbParks.find().iterator();
 		try {
 			while (cursor.hasNext()) {
@@ -63,15 +63,12 @@ public class MLBParkResource {
 			@QueryParam("lon2") float lon2) {
 
 		ArrayList<MLBPark> allParksList = new ArrayList<MLBPark>();
-		MongoCollection mlbParks =  dbConnection.getCollection();
+		MongoCollection<Document> mlbParks =  dbConnection.getCollection();
 
 		// make the query object
 		BasicDBObject spatialQuery = new BasicDBObject();
 
 		ArrayList<double[]> boxList = new ArrayList<double[]>();
-		boxList.add(new double[] { new Float(lon2), new Float(lat2) });
-		boxList.add(new double[] { new Float(lon1), new Float(lat1) });
-
 		BasicDBObject boxQuery = new BasicDBObject();
 		boxQuery.put("$box", boxList);
 
